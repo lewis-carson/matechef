@@ -11,18 +11,23 @@ type Context struct {
 	betaScore  int
 }
 
+type Settings struct {
+	MinDepth int
+}
+
 //finds max of a node given context
-func (node *Node) Max(ctx Context) (*Node, int) {
+func (node *Node) max(ctx Context) (*Node, int) {
+	if node.Position.Status() == chess.Checkmate {
+		return node, -999999999
+	}
+
 	if node.isTerminal() {
 		node.Score()
 		return node, node.score
 	}
-	if node.Position.Status() == chess.Checkmate {
-		return node, -999999
-	}
 
 	for _, child := range node.children {
-		pos, score := child.Min(ctx)
+		pos, score := child.min(ctx)
 
 		if score >= ctx.betaScore {
 			return ctx.betaPos, ctx.betaScore // fail hard alpha-cutoff
@@ -35,17 +40,17 @@ func (node *Node) Max(ctx Context) (*Node, int) {
 }
 
 //finds min of a node given context
-func (node *Node) Min(ctx Context) (*Node, int) {
+func (node *Node) min(ctx Context) (*Node, int) {
+	if node.Position.Status() == chess.Checkmate {
+		return node, 99999999
+	}
 	if node.isTerminal() {
 		node.Score()
 		return node, -node.score
 	}
-	if node.Position.Status() == chess.Checkmate {
-		return node, 999999
-	}
 
 	for _, child := range node.children {
-		pos, score := child.Max(ctx)
+		pos, score := child.max(ctx)
 		if score <= ctx.alphaScore {
 			return ctx.alphaPos, ctx.alphaScore // fail hard alpha-cutoff
 		}
@@ -56,7 +61,7 @@ func (node *Node) Min(ctx Context) (*Node, int) {
 	return ctx.betaPos, ctx.betaScore
 }
 
-func (node *Node) Search() *chess.Move {
+func (node *Node) Search(settings Settings) (*chess.Move, int) {
 	ctx := Context{
 		alphaPos:   node,
 		alphaScore: -999999999,
@@ -64,10 +69,10 @@ func (node *Node) Search() *chess.Move {
 		betaScore:  99999999,
 	}
 
-	node.GenerateToDepth(4)
+	node.GenerateToDepth(settings.MinDepth)
 
-	found, _ := node.Max(ctx)
+	found, score := node.max(ctx)
 	move := found.ConstructMove()
 
-	return move
+	return move, score
 }

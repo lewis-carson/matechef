@@ -10,6 +10,7 @@ import (
 
 	"github.com/abiosoft/ishell"
 	"github.com/notnil/chess"
+	matechef "github.com/torvim/matechef/engine"
 )
 
 func main() {
@@ -18,10 +19,14 @@ func main() {
 	shell := ishell.New()
 
 	// display welcome info.
-	shell.Println("Kimchi v2.1")
+	shell.Println("mateChef v1.3")
 	shell.ShowPrompt(false)
 
 	game := chess.NewGame()
+
+	s := matechef.Settings{
+		MinDepth: 4,
+	}
 
 	// register a function for "greet" command.
 	shell.AddCmd(&ishell.Cmd{
@@ -72,7 +77,12 @@ func main() {
 	shell.AddCmd(&ishell.Cmd{
 		Name: "go",
 		Func: func(c *ishell.Context) {
-			return
+			t := matechef.Node{
+				Position: game.Position(),
+			}
+
+			move, _ := t.Search(s)
+			c.Println("bestmove", move)
 		},
 	})
 

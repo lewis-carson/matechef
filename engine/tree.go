@@ -1,6 +1,8 @@
 package matechef
 
-import "github.com/notnil/chess"
+import (
+	"github.com/notnil/chess"
+)
 
 type Node struct {
 	Position *chess.Position
@@ -20,7 +22,7 @@ func reverse(s []*chess.Move) []*chess.Move {
 
 func (node *Node) traceToRoot(line []*chess.Move) []*chess.Move {
 	if node.parent != nil {
-		line = append(line, node.parent.move)
+		line = append(line, node.move)
 		line = node.parent.traceToRoot(line)
 	}
 	return line
@@ -29,7 +31,7 @@ func (node *Node) traceToRoot(line []*chess.Move) []*chess.Move {
 func (node *Node) ConstructMove() *chess.Move {
 	var emptyLine []*chess.Move
 	line := reverse(node.traceToRoot(emptyLine))
-	return line[len(line)-1]
+	return line[0]
 }
 
 func (node *Node) isTerminal() bool {
