@@ -1,6 +1,8 @@
 package matechef
 
 import (
+	"fmt"
+
 	"github.com/notnil/chess"
 )
 
@@ -13,6 +15,10 @@ type Context struct {
 
 type Settings struct {
 	MinDepth int
+}
+
+func (node *Node) isQuiet() bool {
+	return true
 }
 
 //finds max of a node given context
@@ -64,14 +70,15 @@ func (node *Node) min(ctx Context) (*Node, int) {
 func (node *Node) Search(settings Settings) (*chess.Move, int) {
 	ctx := Context{
 		alphaPos:   node,
-		alphaScore: -999999999,
+		alphaScore: -999999999998,
 		betaPos:    node,
-		betaScore:  99999999,
+		betaScore:  99999999998,
 	}
 
 	node.GenerateToDepth(settings.MinDepth)
 
 	found, score := node.max(ctx)
+	fmt.Println(score)
 	move := found.ConstructMove()
 
 	return move, score

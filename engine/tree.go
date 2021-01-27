@@ -31,6 +31,7 @@ func (node *Node) traceToRoot(line []*chess.Move) []*chess.Move {
 func (node *Node) ConstructMove() *chess.Move {
 	var emptyLine []*chess.Move
 	line := reverse(node.traceToRoot(emptyLine))
+	//fmt.Println(line)
 	return line[0]
 }
 

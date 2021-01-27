@@ -23,6 +23,22 @@ func TestMain(m *testing.M) {
 	fmt.Println(move)
 }
 
+func TestBlack(t *testing.T) {
+	g := chess.NewGame()
+	e4 := g.ValidMoves()[0]
+	g.Move(e4)
+	tree := matechef.Node{
+		Position: g.Position(),
+	}
+
+	s := matechef.Settings{
+		MinDepth: 4,
+	}
+
+	move, _ := tree.Search(s)
+	fmt.Println(move)
+}
+
 func TestM1(t *testing.T) {
 	fenStr := "6k1/pp3ppp/2b5/8/7N/6P1/P4P1P/3rQ1K1 b - - 0 1"
 	fen, _ := chess.FEN(fenStr)
